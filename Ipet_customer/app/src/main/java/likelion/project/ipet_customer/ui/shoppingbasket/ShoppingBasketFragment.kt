@@ -103,8 +103,21 @@ class ShoppingBasketFragment : Fragment() {
             // 결제하기 버튼
             buttonShoppingBasketPayment.run {
                 setOnClickListener {
+                    val selectedProductIdxList = selectedProducts.map { position ->
+                        productDataList[position].productIdx
+                    }
+
+                    val selectedJointIdxList = selectedGroupProducts.map { position ->
+                        jointDataList[position].jointIdx
+                    }
+
+                    val bundle = Bundle().apply {
+                        putStringArrayList("selectedProductIdxList", ArrayList(selectedProductIdxList))
+                        putStringArrayList("selectedJointIdxList", ArrayList(selectedJointIdxList))
+                    }
+
                     mainActivity.activityMainBinding.bottomNavigation.visibility = View.GONE
-                    mainActivity.replaceFragment(MainActivity.PAYMENT_FRAGMENT, true, null)
+                    mainActivity.replaceFragment(MainActivity.PAYMENT_FRAGMENT, true, bundle)
                 }
             }
 
