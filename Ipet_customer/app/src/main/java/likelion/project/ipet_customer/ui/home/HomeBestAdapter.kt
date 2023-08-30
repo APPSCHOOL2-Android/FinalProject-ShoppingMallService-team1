@@ -77,7 +77,7 @@ class HomeBestAdapter(private val mainActivity: MainActivity,val products: Mutab
         holder.itemBestRank.run{
             typeface = ResourcesCompat.getFont(holder.itemView.context, R.font.pretendard_bold)
             setTextColor(ContextCompat.getColor(mainActivity, R.color.black))
-            textSize = 12f
+            textSize = 16f
             text = "${position+1}위"
         }
 

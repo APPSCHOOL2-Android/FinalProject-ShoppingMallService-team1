@@ -1,6 +1,7 @@
 package likelion.project.ipet_customer.ui.payment
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -12,10 +13,17 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import likelion.project.ipet_customer.R
 import likelion.project.ipet_customer.databinding.FragmentPaymentBinding
 import likelion.project.ipet_customer.databinding.ItemShoppingBasketProductBinding
+import likelion.project.ipet_customer.model.Joint
+import likelion.project.ipet_customer.model.Product
+import likelion.project.ipet_customer.ui.login.LoginViewModel
 import likelion.project.ipet_customer.ui.main.MainActivity
+import java.sql.Timestamp
 
 class PaymentFragment : Fragment() {
 
@@ -27,6 +35,14 @@ class PaymentFragment : Fragment() {
     )
 
     lateinit var address : String
+
+    val db = Firebase.firestore
+    val customerId = LoginViewModel.customer.customerId
+    private var selectedProductIdxList: List<String>? = null
+    private var selectedJointIdxList: List<String>? = null
+    val productDataList = mutableListOf<Product>()
+    val jointDataList = mutableListOf<Joint>()
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -34,6 +50,17 @@ class PaymentFragment : Fragment() {
 
         fragmentPaymentBinding = FragmentPaymentBinding.inflate(layoutInflater)
         mainActivity = activity as MainActivity
+
+        selectedProductIdxList = arguments?.getStringArrayList("selectedProductIdxList")
+        selectedJointIdxList = arguments?.getStringArrayList("selectedJointIdxList")
+
+        if (selectedProductIdxList != null) {
+            checkProductDB(selectedProductIdxList!!)
+        }
+
+        if (selectedJointIdxList != null) {
+            checkJointDB(selectedJointIdxList!!)
+        }
 
         fragmentPaymentBinding.run {
 
@@ -106,15 +133,223 @@ class PaymentFragment : Fragment() {
                 true
             }
 
-            // 결제하기 버튼 클릭
+            // 결제하기 버튼 클릭 이벤트 처리
             buttonPayment.setOnClickListener {
-                mainActivity.replaceFragment(MainActivity.PAYMENT_COMPLETE_FRAGMENT, false, null)
+                selectedProductIdxList?.let { selectedProductIdxList ->
+                    addOrders(selectedProductIdxList, customerId)
+                }
+
+                selectedJointIdxList?.let { selectedJointIdxList ->
+                    addJointOrders(selectedJointIdxList, customerId)
+                }
             }
 
         }
 
         return fragmentPaymentBinding.root
     }
+
+    private fun checkProductDB(inputProductIdxList: List<String>) {
+
+        if (inputProductIdxList.isNotEmpty()) {
+            productDataList.clear()
+
+            db.collection("Cart")
+                .whereEqualTo("buyerId", customerId)
+                .whereIn("productIdx", inputProductIdxList)
+                .get()
+                .addOnSuccessListener { cartResult ->
+                    val productIdxList = mutableListOf<String>()
+
+                    for (cartDocument in cartResult) {
+                        val productIdx = cartDocument.getString("productIdx")
+                        if (!productIdx.isNullOrEmpty()) {
+                            productIdxList.add(productIdx)
+                        }
+                    }
+
+                    if (productIdxList.isNotEmpty()) {
+                        db.collection("Product")
+                            .whereIn("productIdx", productIdxList)
+                            .get()
+                            .addOnSuccessListener { productResult ->
+                                for (productDocument in productResult) {
+                                    val product = productDocument.toObject(Product::class.java)
+                                    productDataList.add(product)
+
+                                }
+
+                                fragmentPaymentBinding.recyclerPaymentProduct.adapter?.notifyDataSetChanged()
+                                // 데이터가 비어있을 때 처리
+                                if (productDataList.isEmpty()) {
+                                    // 처리 방법 추가
+                                }
+                            }
+                            .addOnFailureListener { exception ->
+                                Log.d("PaymentFragment", "Error getting product documents: ", exception)
+                            }
+                    } else {
+                        // productIdxList가 비어있을 때 처리
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    Log.d("PaymentFragment", "Error getting cart documents: ", exception)
+                }
+        }
+    }
+
+    private fun checkJointDB(inputJointIdxList: List<String>) {
+
+        if (inputJointIdxList.isNotEmpty()) {
+            jointDataList.clear()
+
+            db.collection("Cart")
+                .whereEqualTo("buyerId", customerId)
+                .whereIn("productIdx", inputJointIdxList)
+                .get()
+                .addOnSuccessListener { cartResult ->
+                    val jointIdxList = mutableListOf<String>()
+
+                    for (cartDocument in cartResult) {
+                        val jointIdx = cartDocument.getString("productIdx")
+                        if (!jointIdx.isNullOrEmpty()) {
+                            jointIdxList.add(jointIdx)
+                        }
+                    }
+
+                    if (jointIdxList.isNotEmpty()) {
+                        db.collection("Joint")
+                            .whereIn("jointIdx", jointIdxList)
+                            .get()
+                            .addOnSuccessListener { jointResult ->
+                                for (jointDocument in jointResult) {
+                                    val joint = jointDocument.toObject(Joint::class.java)
+                                    jointDataList.add(joint)
+                                }
+                                fragmentPaymentBinding.recyclerPaymentProduct.adapter?.notifyDataSetChanged()
+                                // 데이터가 비어있을 때 처리
+                                if (jointDataList.isEmpty()) {
+
+                                }
+                            }
+                            .addOnFailureListener { exception ->
+                                Log.d("PaymentFragment", "Error getting joint documents: ", exception)
+                            }
+                    } else {
+                        // jointIdxList가 비어있을 때 처리
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    Log.d("PaymentFragment", "Error getting cart documents: ", exception)
+                }
+
+        }
+    }
+
+    private fun addOrders(selectedProductIdxList: List<String>, customerId: String) {
+        val currentTimeMillis = System.currentTimeMillis()
+        val currentTime = Timestamp(currentTimeMillis)
+
+        selectedProductIdxList.forEach { selectedProductIdx ->
+            val orderData = hashMapOf(
+                "orderDate" to currentTime,
+                "orderNumber" to "",
+                "buyerId" to customerId,
+                "orderRecipient" to customerId,
+                "orderState" to 1,
+                "productIdx" to selectedProductIdx
+            )
+
+            db.collection("Product")
+                .whereEqualTo("productIdx", selectedProductIdx)
+                .get()
+                .addOnSuccessListener { productResult ->
+                    if (!productResult.isEmpty) {
+                        val productDocument = productResult.documents[0]
+                        val sellerId = productDocument.getString("productSeller")
+                        orderData["sellerId"] = sellerId ?: ""
+
+                        db.collection("Order3")
+                            .add(orderData)
+                            .addOnSuccessListener { documentReference ->
+                                val orderNumber = documentReference.id
+                                orderData["orderNumber"] = orderNumber
+
+                                db.collection("Order3")
+                                    .document(documentReference.id)
+                                    .set(orderData)
+                                    .addOnSuccessListener {
+                                        Log.d("PaymentFragment", "Order document updated with orderNumber: $orderNumber")
+                                        mainActivity.replaceFragment(MainActivity.PAYMENT_COMPLETE_FRAGMENT, false, null)
+                                    }
+                                    .addOnFailureListener { e ->
+                                        Log.w("PaymentFragment", "Error updating Order document", e)
+                                    }
+                            }
+                            .addOnFailureListener { e ->
+                                Log.w("PaymentFragment", "Error adding Order document", e)
+                            }
+                    }
+                }
+                .addOnFailureListener { e ->
+                    Log.w("PaymentFragment", "Error getting product document", e)
+                }
+        }
+    }
+
+    private fun addJointOrders(selectedJointIdxList: List<String>, customerId: String) {
+        val currentTimeMillis = System.currentTimeMillis()
+        val currentTime = Timestamp(currentTimeMillis)
+
+        selectedJointIdxList.forEach { selectedJointIdx ->
+            val orderData = hashMapOf(
+                "orderDate" to currentTime,
+                "orderNumber" to "",
+                "buyerId" to customerId,
+                "orderRecipient" to customerId,
+                "orderState" to 1,
+                "productIdx" to selectedJointIdx
+            )
+
+            db.collection("Joint")
+                .whereEqualTo("jointIdx", selectedJointIdx)
+                .get()
+                .addOnSuccessListener { jointResult ->
+                    if (!jointResult.isEmpty) {
+                        val jointDocument = jointResult.documents[0]
+                        val sellerId = jointDocument.getString("jointSeller")
+                        orderData["sellerId"] = sellerId ?: ""
+
+                        db.collection("Order3")
+                            .add(orderData)
+                            .addOnSuccessListener { documentReference ->
+                                val orderNumber = documentReference.id
+                                orderData["orderNumber"] = orderNumber
+
+                                db.collection("Order3")
+                                    .document(documentReference.id)
+                                    .set(orderData)
+                                    .addOnSuccessListener {
+                                        Log.d("PaymentFragment", "Order document updated with orderNumber: $orderNumber")
+                                        mainActivity.replaceFragment(MainActivity.PAYMENT_COMPLETE_FRAGMENT, false, null)
+                                    }
+                                    .addOnFailureListener { e ->
+                                        Log.w("PaymentFragment", "Error updating Order document", e)
+                                    }
+                            }
+                            .addOnFailureListener { e ->
+                                Log.w("PaymentFragment", "Error adding Order document", e)
+                            }
+                    }
+                }
+                .addOnFailureListener { e ->
+                    Log.w("PaymentFragment", "Error getting joint document", e)
+                }
+        }
+    }
+
+
+
 
     inner class PaymentProductAdapter : RecyclerView.Adapter<PaymentProductAdapter.PaymentProductViewHolder>() {
 
@@ -151,13 +386,47 @@ class PaymentFragment : Fragment() {
         }
 
         override fun getItemCount(): Int {
-            return 3
+            return productDataList.size + jointDataList.size
         }
 
         override fun onBindViewHolder(holder: PaymentProductViewHolder, position: Int) {
             holder.checkBoxProdut.visibility = View.GONE
 
+            if (position < productDataList.size) {
+                bindProduct(holder, position)
+            } else {
+                bindJoint(holder, position - productDataList.size)
+            }
+
         }
+
+        private fun bindProduct(holder: PaymentProductViewHolder, position: Int) {
+            val product = productDataList[position]
+            holder.textViewProductName.text = product.productTitle
+            holder.textViewProductPrice.text = "${mainActivity.formatNumberToCurrency(product.productPrice)}원"
+
+            val imageUrl = product.productImg?.get(0)
+            imageUrl?.let {
+                Glide.with(holder.itemView.context)
+                    .load(it)
+                    .into(holder.imageViewProduct)
+            }
+        }
+
+        private fun bindJoint(holder: PaymentProductViewHolder, position: Int) {
+            val joint = jointDataList[position]
+            holder.textViewProductName.text = joint.jointTitle
+            holder.textViewProductPrice.text = "${mainActivity.formatNumberToCurrency(joint.jointPrice)}원"
+
+            val imageUrl = joint.jointImg?.get(0)
+            imageUrl?.let {
+                Glide.with(holder.itemView.context)
+                    .load(it)
+                    .into(holder.imageViewProduct)
+            }
+        }
+
+
     }
 
 }

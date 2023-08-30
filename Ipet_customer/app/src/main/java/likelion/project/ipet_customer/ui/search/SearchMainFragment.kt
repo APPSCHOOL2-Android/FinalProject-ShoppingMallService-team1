@@ -3,16 +3,13 @@ package likelion.project.ipet_customer.ui.search
 import SearchAdapter
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
-import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.SearchView
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
@@ -29,24 +26,25 @@ import kotlin.concurrent.thread
 
 class SearchMainFragment : Fragment() {
 
-    lateinit var fragmentSearchMainBinding: FragmentSearchMainBinding
+    private lateinit var fragmentSearchMainBinding: FragmentSearchMainBinding
+    private lateinit var searchViewModel: SearchViewModel
+    private val productList = mutableListOf<Product>()
+    private val bestIdxList = mutableListOf<String>()
+    private val bestSellerList = mutableListOf<Any>()
+
     lateinit var mainActivity: MainActivity
-    lateinit var viewModel: SearchViewModel
-    val productList = mutableListOf<Product>()
-    val bestIdxList = mutableListOf<String>()
-    val bestSellerList = mutableListOf<Any>()
     val db = Firebase.firestore
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         fragmentSearchMainBinding = FragmentSearchMainBinding.inflate(inflater)
         mainActivity = activity as MainActivity
-        viewModel = ViewModelProvider(this, SearchViewModel.Factory(mainActivity.application)).get(SearchViewModel::class.java)
+        searchViewModel = ViewModelProvider(this, SearchViewModel.Factory(mainActivity.application)).get(SearchViewModel::class.java)
 
         fragmentSearchMainBinding.run {
-            viewModel.getAllSearches.observe(viewLifecycleOwner, Observer { search ->
+            searchViewModel.getAllSearches.observe(viewLifecycleOwner) { search ->
                 val searchList = search.map { it.searchData }
                 val reverseList = searchList.reversed()
                 chip1.text = reverseList.getOrNull(0) ?: "검색어 1"
@@ -76,12 +74,12 @@ class SearchMainFragment : Fragment() {
                         }
                     }
                 }
-            })
+            }
 
-            chip1.setOnClickListener { chiptoSearch(chip1) }
-            chip2.setOnClickListener { chiptoSearch(chip2) }
-            chip3.setOnClickListener { chiptoSearch(chip3) }
-            chip4.setOnClickListener { chiptoSearch(chip4) }
+            chip1.setOnClickListener { chipToSearch(chip1) }
+            chip2.setOnClickListener { chipToSearch(chip2) }
+            chip3.setOnClickListener { chipToSearch(chip3) }
+            chip4.setOnClickListener { chipToSearch(chip4) }
 
             searchViewSearch.run {
                 queryHint = "검색어를 입력하세요."
@@ -97,7 +95,6 @@ class SearchMainFragment : Fragment() {
 
                     override fun onQueryTextChange(newText: String?): Boolean {
                         if (newText.isNullOrBlank()) {
-                            // 검색어가 지워질 때, 기존 레이아웃 표시
                             layoutSearchResult.visibility = View.INVISIBLE
                             layoutSearchNoResult.visibility = View.GONE
                             layoutSearchRecent.visibility = View.VISIBLE
@@ -156,11 +153,11 @@ class SearchMainFragment : Fragment() {
     }
 
     private fun performSearch(query: String) {
-        if (!query.isNullOrBlank()) {
+        if (query.isNotBlank()) {
             fragmentSearchMainBinding.layoutSearchRecent.visibility = View.GONE
             fragmentSearchMainBinding.layoutSearchBest.visibility = View.GONE
             val search = Search(0, query)
-            viewModel.insertSearch(search)
+            searchViewModel.insertSearch(search)
             productList.clear()
             db.collection("Product")
                 .get()
@@ -168,7 +165,6 @@ class SearchMainFragment : Fragment() {
                     for (document in result) {
                         val title = document["productTitle"] as String
                         if (title.contains(query)) {
-                            // 검색 결과를 productList에 추가
                             val idx = document["productIdx"] as String
                             val animalType = document["productAnimalType"] as String
                             val img = document["productImg"] as ArrayList<*>
@@ -185,29 +181,23 @@ class SearchMainFragment : Fragment() {
                             productList.add(item)
                         }
                     }
-                    // 검색 결과에 따라 레이아웃을 변경
                     if (productList.isEmpty()) {
-                        // 검색 결과가 없는 경우
                         fragmentSearchMainBinding.layoutSearchResult.visibility = View.GONE
                         fragmentSearchMainBinding.layoutSearchNoResult.visibility = View.VISIBLE
                     } else {
-                        // 검색 결과가 있는 경우
                         fragmentSearchMainBinding.layoutSearchResult.visibility = View.VISIBLE
                         fragmentSearchMainBinding.layoutSearchNoResult.visibility = View.GONE
                     }
-
-                    // 검색 결과를 업데이트
                     fragmentSearchMainBinding.recyclerViewSearchResult.adapter?.notifyDataSetChanged()
                 }
         }
     }
-    fun chiptoSearch(chip: Chip){
+    private fun chipToSearch(chip: Chip){
         val searchText = chip.text.toString()
         performSearch(searchText)
     }
 
     private suspend fun findTop5BestSellers() {
-        // Firebase Firestore에서 Order 컬렉션 조회
         val orderResult = db.collection("Order").get().await()
         val salesMap = mutableMapOf<String, Int>()
 

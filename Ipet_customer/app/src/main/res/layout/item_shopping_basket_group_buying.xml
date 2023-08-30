@@ -12,31 +12,35 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:button="@drawable/selector_checkbox"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/imageViewGroupBuying"
-        android:layout_width="70dp"
-        android:layout_height="56dp"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
         android:src="@drawable/img_dogfood"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/checkBoxGroupBuying"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/textViewGroupBuyingName"
-        style="@style/Typography.Medium24"
+        style="@style/Typography.Medium20"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
         android:text="맛있는 사료"
         app:layout_constraintStart_toEndOf="@+id/imageViewGroupBuying"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@+id/imageViewGroupBuying" />
 
     <TextView
         android:id="@+id/textViewGroupBuyingCount"
         style="@style/Typography.Regular16"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
         android:text="수량 1개"
         app:layout_constraintStart_toEndOf="@+id/imageViewGroupBuying"
         app:layout_constraintTop_toBottomOf="@+id/textViewGroupBuyingName" />
@@ -46,18 +50,20 @@
         style="@style/Typography.Regular16"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
         android:text="남은 기간 : 2일"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/textViewGroupBuyingName" />
 
     <TextView
         android:id="@+id/textViewGroupBuyingPrice"
         style="@style/Typography.Bold16"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
         android:text="5,000원"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewGroupBuyingName" />
+        app:layout_constraintTop_toBottomOf="@+id/textViewGroupBuyingPeriod" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

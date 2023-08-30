@@ -1,6 +1,7 @@
+package likelion.project.ipet_customer.ui.product
+
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
@@ -10,42 +11,35 @@ import likelion.project.ipet_customer.databinding.ItemProductCardBinding
 import likelion.project.ipet_customer.model.Product
 import likelion.project.ipet_customer.ui.main.MainActivity
 
-class SearchAdapter(
+class ProductListAdapter(
     private val productList: List<Product>,
-    private val mainActivity: MainActivity,
-) : RecyclerView.Adapter<SearchAdapter.Holder>() {
+    private val mainActivity: MainActivity
+) : RecyclerView.Adapter<ProductListAdapter.Holder>() {
 
-    inner class Holder(rowBinding: ItemProductCardBinding) : RecyclerView.ViewHolder(rowBinding.root) {
+    inner class Holder(itemProductCardBinding: ItemProductCardBinding) :
+        RecyclerView.ViewHolder(itemProductCardBinding.root) {
         val imageViewCardThumbnail: ImageView
-        val imageViewCardHeart: ImageView
         val textViewCardTitle: TextView
         val textViewCardCost: TextView
 
         init {
-            imageViewCardHeart = rowBinding.imageViewCardHeart
-            imageViewCardThumbnail = rowBinding.imageViewCardThumbnail
-            textViewCardTitle = rowBinding.textViewCardTitle
-            textViewCardCost = rowBinding.textViewCardCost
-            rowBinding.root.setOnClickListener {
-                val bundle = Bundle()
+            imageViewCardThumbnail = itemProductCardBinding.imageViewCardThumbnail
+            textViewCardTitle = itemProductCardBinding.textViewCardTitle
+            textViewCardCost = itemProductCardBinding.textViewCardCost
+            itemProductCardBinding.root.setOnClickListener {
+                var bundle = Bundle()
                 val readProductIdx = productList[adapterPosition].productIdx
                 bundle.putString("readProductIdx", readProductIdx)
                 bundle.putString("readToggle", "product")
-                mainActivity.replaceFragment(MainActivity.PRODUCT_INFO_FRAGMENT, true, bundle)
+                mainActivity.replaceFragment(MainActivity.PRODUCT_INFO_FRAGMENT, false, bundle)
             }
-            imageViewCardHeart.visibility = View.GONE
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
-        val rowBinding = ItemProductCardBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        val holder = Holder(rowBinding)
-
-        rowBinding.root.layoutParams = ViewGroup.LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        )
-        return holder
+        val itemProductCardBinding =
+            ItemProductCardBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return Holder(itemProductCardBinding)
     }
 
     override fun getItemCount(): Int {

@@ -15,9 +15,7 @@
         android:background="@color/white"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme"
-        app:navigationIcon="@drawable/ic_back_24dp"
-        app:title="찜"
-        app:titleTextAppearance="@style/Typography.Medium20" />
+        app:titleTextAppearance="@style/Typography.Bold24" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView_heart_list"

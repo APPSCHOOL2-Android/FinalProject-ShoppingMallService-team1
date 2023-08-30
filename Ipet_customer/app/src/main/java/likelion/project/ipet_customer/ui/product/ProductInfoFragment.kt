@@ -1,5 +1,6 @@
 package likelion.project.ipet_customer.ui.product
 
+import android.content.res.ColorStateList
 import android.graphics.Paint
 import android.os.Bundle
 import android.util.Log
@@ -37,7 +38,6 @@ class ProductInfoFragment : Fragment() {
     var readToggle = ""
 
     var imgList: List<String> = emptyList()
-    lateinit var sheetBehavior: BottomSheetBehavior<LinearLayout>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,8 +45,6 @@ class ProductInfoFragment : Fragment() {
     ): View? {
         binding = FragmentProductInfoBinding.inflate(inflater)
         mainActivity = activity as MainActivity
-
-        sheetBehavior = BottomSheetBehavior.from(binding.includeProductinfoBottomsheet.bottomsheetProductinfo)
 
         readToggle = arguments?.getString("readToggle")!!
 
@@ -73,9 +71,6 @@ class ProductInfoFragment : Fragment() {
             textviewProductinfoCostprice.paintFlags =
                 textviewProductinfoCostprice.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
 
-            // 상세 이미지1
-            imageviewProductinfoDetail1.setImageResource(R.drawable.img_dog_food_detail)
-
             textviewProductinfoReviewnumber.setOnClickListener {
                 scrollviewProductinfo.fullScroll(ScrollView.FOCUS_DOWN)
             }
@@ -96,16 +91,6 @@ class ProductInfoFragment : Fragment() {
                     mainActivity.replaceFragment(MainActivity.REVIEWALL_FRAGMENT, true, newBundle)
                 }
             }
-
-            sheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
-                override fun onStateChanged(bottomSheet: View, newState: Int) {
-                    Log.d("InfoFragment", "BottomSheet state changed: $newState")
-                }
-
-                override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                    // 슬라이딩 중인 경우
-                }
-            })
 
             setupViewModel()
             return binding.root
@@ -144,59 +129,29 @@ class ProductInfoFragment : Fragment() {
     }
 
     private fun handleProductData(product: Product) {
-        loadText(product.productTitle, product.productText, product.productPrice)
+        val category = product.productAnimalType + "/" + product.productLcategory + "/" + product.productScategory
+        loadText(product.productTitle, product.productText, product.productPrice, category)
         imgList = product.productImg as ArrayList<String>
+
         binding.run {
             viewpager2ProductinfoThumbnail.adapter = ProductInfoFragmentStateAdapter(mainActivity)
 
             buttonProductinfoBuy.setOnClickListener {
-                sheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+                val bottomSheetFragment = ProductInfoBottomSheetFragment.newInstance()
+                bottomSheetFragment.bottomSheetListener = object : ProductInfoBottomSheetFragment.BottomSheetListener {
+                    override fun onBuyButtonClicked(num: Int) {
+                        saveAddCart(num)
+                        mainActivity.replaceFragment(MainActivity.SHOPPING_BASKET_FRAGMENT, true, null)
+                    }
 
+                    override fun onCartButtonClicked(num: Int) {
+                        saveAddCart(num)
+                    }
+                }
+                bottomSheetFragment.show(childFragmentManager, bottomSheetFragment.tag)
             }
 
-            includeProductinfoBottomsheet.run {
-
-                // 원가 가격 표시
-                textviewBottomsheetCostprice.paintFlags =
-                    textviewProductinfoCostprice.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
-
-                var num = 1
-                // 왼쪽 화살표 버튼
-                imagebuttonBottomsheetMinus.setOnClickListener {
-                    if (num > 1) {
-                        num--
-                        textviewBottomsheetNumber.text = "$num"
-                    }
-                }
-                // 오른쪽 화살표 버튼
-                imagebuttonBottomsheetPlus.setOnClickListener {
-                    num++
-                    textviewBottomsheetNumber.text = "$num"
-                }
-
-                buttonBottomsheetBuy.setOnClickListener {
-                    lifecycleScope.launch {
-                        for (n in 1 .. num) {
-                            productInfoViewModel.setAddCart(readProductIdx, "일반")
-                        }
-                    }
-
-                    sheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-                    mainActivity.replaceFragment(MainActivity.SHOPPING_BASKET_FRAGMENT, true, null)
-                }
-
-                buttonBottomsheetCart.setOnClickListener {
-                    if (sheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
-                        sheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-                    }
-
-                    lifecycleScope.launch {
-                        for (n in 1 .. num) {
-                            productInfoViewModel.setAddCart(readProductIdx, "일반")
-                        }
-                    }
-                }
-            }
+            chipProductinfoTerm.visibility = View.GONE
         }
 
         setupTabLayoutMediator()
@@ -204,7 +159,9 @@ class ProductInfoFragment : Fragment() {
     }
 
     private fun handleJointData(joint: Joint) {
-        loadText(joint.jointTitle, joint.jointText, joint.jointPrice)
+        val category = joint.jointAnimalType
+
+        loadText(joint.jointTitle, joint.jointText, joint.jointPrice, category)
         imgList = joint.jointImg as ArrayList<String>
         binding.run {
             viewpager2ProductinfoThumbnail.adapter = ProductInfoFragmentStateAdapter(mainActivity)
@@ -217,6 +174,8 @@ class ProductInfoFragment : Fragment() {
             }
 
             imageviewProductinfoHeart.visibility = View.GONE
+
+            chipProductinfoTerm.text = joint.jointTerm
         }
 
         setupTabLayoutMediator()
@@ -275,10 +234,11 @@ class ProductInfoFragment : Fragment() {
         }
     }
 
-    fun loadText(title:String, text:String, price:Long){
+    fun loadText(title:String, text:String, price:Long, category: String){
         binding.textviewProductinfoTitle.text = title
         binding.textviewProductinfoText.text = text
         binding.textviewProductinfoPrice.text = "${mainActivity.formatNumberToCurrency(price)}원"
+        binding.textViewProductinfoCategory.text = category
     }
 
     fun loadReviewData(score:Float, number : Int){
@@ -286,6 +246,12 @@ class ProductInfoFragment : Fragment() {
             ratingbarProductinfoScore.rating = score
             textviewProductinfoScore.text = "$score"
             textviewProductinfoReviewnumber.text = "($number)"
+        }
+    }
+
+    private fun saveAddCart(num : Int){
+        for (n in 1 .. num) {
+            productInfoViewModel.setAddCart(readProductIdx, "일반")
         }
     }
 }

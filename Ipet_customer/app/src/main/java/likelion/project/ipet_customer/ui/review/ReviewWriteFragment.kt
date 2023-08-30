@@ -136,6 +136,13 @@ class ReviewWriteFragment : Fragment() {
         }
 
         fragmentReviewWriteBinding.run {
+            toolbarReviewWrite.run {
+                title = "리뷰 작성하기"
+                setNavigationIcon(R.drawable.ic_back_24dp)
+                setNavigationOnClickListener {
+                    mainActivity.removeFragment(MainActivity.PRODUCT_INFO_FRAGMENT)
+                }
+            }
             imageViewReviewWriteGalleryButton.run {
                 setOnClickListener {
                     // 앨범에서 사진을 선택할 수 있는 Activity를 실행한다.

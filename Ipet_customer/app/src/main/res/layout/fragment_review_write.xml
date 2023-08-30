@@ -15,9 +15,7 @@
         android:background="@color/white"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme"
-        app:navigationIcon="@drawable/ic_back_24dp"
-        app:title="리뷰 작성하기"
-        app:titleTextAppearance="@style/Typography.Medium24" />
+        app:titleTextAppearance="@style/Typography.Bold24" />
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"

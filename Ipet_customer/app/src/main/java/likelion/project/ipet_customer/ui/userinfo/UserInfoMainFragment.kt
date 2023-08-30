@@ -7,7 +7,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.res.ResourcesCompat
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import kotlinx.coroutines.launch
 import likelion.project.ipet_customer.R
 import likelion.project.ipet_customer.databinding.FragmentUserInfoMainBinding
 import likelion.project.ipet_customer.databinding.ItemUserinfoChangeaddressBinding
@@ -19,8 +24,8 @@ class UserInfoMainFragment : Fragment() {
 
     lateinit var fragmentUserInfoMainBinding: FragmentUserInfoMainBinding
     lateinit var mainActivity: MainActivity
+    lateinit var userInfoViewModel: UserInfoViewModel
     var fragmentState = ""
-    val userInfoViewModel = UserInfoViewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -28,23 +33,23 @@ class UserInfoMainFragment : Fragment() {
     ): View? {
         fragmentUserInfoMainBinding = FragmentUserInfoMainBinding.inflate(inflater)
         mainActivity = activity as MainActivity
-
-        Log.i("user", LoginViewModel.customer.customerId)
-        Log.i("user", LoginViewModel.customer.customerName)
-        Log.i("user", LoginViewModel.customer.customerEmail)
-        Log.i("user", LoginViewModel.customer.customerAddressAddress)
-
+        userInfoViewModel = UserInfoViewModel()
 
         fragmentUserInfoMainBinding.run {
-            textViewUserInfoAddress.text = "${LoginViewModel.customer.customerAddressAddress}" +
-                    " ${LoginViewModel.customer.customerAddressDetail}"
+            userInfoViewModel.viewModelScope.launch {
+                textViewUserInfoDeliveryConfirm.text = userInfoViewModel.getAllStatus()[0].toString()
+                textViewUserInfoDeliveryWay.text = userInfoViewModel.getAllStatus()[1].toString()
+                textViewUserInfoDeliveryWay2.text = userInfoViewModel.getAllStatus()[2].toString()
+            }
+
+            textViewUserInfoAddress.run {
+                typeface = ResourcesCompat.getFont(context, R.font.pretendard_regular)
+                text = "${LoginViewModel.customer.customerAddressAddress}" +
+                        " ${LoginViewModel.customer.customerAddressDetail}"
+            }
 
             toolbarUserInfoMain.run {
                 title = "내 정보"
-                setNavigationIcon(R.drawable.ic_back_24dp)
-                setNavigationOnClickListener {
-                    mainActivity.replaceFragment(MainActivity.PRODUCT_INFO_FRAGMENT, false, null)
-                }
             }
 
             textViewUserInfoName.run{
@@ -126,6 +131,8 @@ class UserInfoMainFragment : Fragment() {
                     // 사용자 입력 상세주소 ViewModel 저장
                     LoginViewModel.customer.customerAddressDetail = binding.editTextChangeAddressDetail.text.toString()
                     userInfoViewModel.saveAddress(LoginViewModel.customer)
+                    textViewUserInfoAddress.text = "${LoginViewModel.customer.customerAddressAddress}" +
+                            " ${LoginViewModel.customer.customerAddressDetail}"
                     dialog.dismiss()
                 }
 

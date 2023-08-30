@@ -1,26 +1,20 @@
 package likelion.project.ipet_customer.ui.product
 
-import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.tabs.TabLayout
-import com.google.android.material.tabs.TabLayout.TabLayoutOnPageChangeListener
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import likelion.project.ipet_customer.R
 import likelion.project.ipet_customer.databinding.FragmentProductCategoryBinding
 import likelion.project.ipet_customer.databinding.FragmentProductListBinding
-import likelion.project.ipet_customer.model.Product
 import likelion.project.ipet_customer.ui.main.MainActivity
-import likelion.project.ipet_customer.ui.product.ProductCategoryFragment.Companion.setButtonDefault
 
 class ProductListFragment : Fragment() {
 
@@ -32,7 +26,6 @@ class ProductListFragment : Fragment() {
     var sCategoryState: Int = 0
     var sCategoryName: String? = null
     val productListName = arrayOf("사료", "간식", "장난감", "의류", "집")
-    val productList = mutableListOf<Product>()
     val db = Firebase.firestore
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -84,7 +77,6 @@ class ProductListFragment : Fragment() {
                 override fun onTabSelected(tab: TabLayout.Tab?) {
                     val selectedTabPosition = tab?.position ?: 0
                     pagerProductList.setCurrentItem(selectedTabPosition, false)
-                    resetButtonColors()
                 }
                 override fun onTabUnselected(tab: TabLayout.Tab?) {}
                 override fun onTabReselected(tab: TabLayout.Tab?) {}
@@ -101,18 +93,6 @@ class ProductListFragment : Fragment() {
 
         }
         return fragmentProductListBinding.root
-    }
-
-    private fun resetButtonColors() {
-        val fragmentProductCategoryBinding = FragmentProductCategoryBinding.inflate(layoutInflater)
-        fragmentProductCategoryBinding.run {
-            setButtonDefault(buttonCategory1)
-            setButtonDefault(buttonCategory2)
-            setButtonDefault(buttonCategory3)
-            setButtonDefault(buttonCategory4)
-            setButtonDefault(buttonCategory5)
-            setButtonDefault(buttonCategory6)
-        }
     }
 
     fun defineSmallCategoryName(cat1: String, cat2: String, cat3: String, cat4: String, cat5: String, cat6: String){

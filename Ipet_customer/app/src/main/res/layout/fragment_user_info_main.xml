@@ -42,6 +42,7 @@
                     android:id="@+id/imageView"
                     android:layout_width="wrap_content"
                     android:layout_height="48dp"
+                    android:layout_marginLeft="10dp"
                     android:src="@drawable/ic_account_circle_48dp" />
 
                 <LinearLayout
@@ -74,7 +75,7 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
+                android:layout_height="150dp"
                 android:background="@color/white"
                 android:padding="10dp">
 
@@ -106,7 +107,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
                     android:fontFamily="@font/pretendard_bold"
-                    android:text="판매/배송"
+                    android:text="주문/배송"
                     android:textAppearance="@style/Typography.Bold16"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -114,7 +115,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="80dp"
+                    android:layout_marginTop="50dp"
                     android:text="입금/결제"
                     android:textAppearance="@style/Typography.Bold16"
                     app:layout_constraintEnd_toEndOf="@+id/textView_userInfo_deliveryConfirm"
@@ -124,7 +125,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="80dp"
+                    android:layout_marginTop="50dp"
                     android:text="배송중"
                     android:textAppearance="@style/Typography.Bold16"
                     app:layout_constraintEnd_toEndOf="@+id/textView_userInfo_deliveryWay"
@@ -134,7 +135,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="80dp"
+                    android:layout_marginTop="50dp"
                     android:text="배송 완료"
                     android:textAppearance="@style/Typography.Bold16"
                     app:layout_constraintEnd_toEndOf="@+id/textView_userInfo_deliveryWay2"
@@ -159,9 +160,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="0"
-                    android:textAppearance="@style/Typography.Bold64"
+                    android:textAppearance="@style/Typography.Bold32"
                     app:layout_constraintEnd_toStartOf="@+id/textView_userInfo_deliveryWay"
-                    app:layout_constraintHorizontal_bias="0.4"
+                    app:layout_constraintHorizontal_bias="0.6"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/textView_userInfo_deliveryWay" />
 
@@ -170,7 +171,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="0"
-                    android:textAppearance="@style/Typography.Bold64"
+                    android:textAppearance="@style/Typography.Bold32"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -182,9 +183,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="0"
-                    android:textAppearance="@style/Typography.Bold64"
+                    android:textAppearance="@style/Typography.Bold32"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.6"
+                    app:layout_constraintHorizontal_bias="0.4"
                     app:layout_constraintStart_toEndOf="@+id/textView_userInfo_deliveryWay"
                     app:layout_constraintTop_toTopOf="@+id/textView_userInfo_deliveryWay" />
 
@@ -196,7 +197,7 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
+                android:layout_height="230dp"
                 android:background="@color/white"
                 android:padding="10dp">
 
@@ -262,21 +263,21 @@
                     android:id="@+id/imageView_userInfo_review"
                     android:layout_width="36dp"
                     android:layout_height="36dp"
-                    android:src="@drawable/ic_rate_review_48dp"
                     android:background="?attr/selectableItemBackground"
+                    android:src="@drawable/ic_rate_review_48dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.22000003" />
+                    app:layout_constraintVertical_bias="0.3" />
 
                 <ImageView
                     android:id="@+id/imageView_userInfo_shopBasket"
                     android:layout_width="36dp"
                     android:layout_height="36dp"
                     android:layout_marginEnd="80dp"
-                    android:src="@drawable/ic_shopping_cart_48dp"
                     android:background="?attr/selectableItemBackground"
+                    android:src="@drawable/ic_shopping_cart_48dp"
                     app:layout_constraintBottom_toBottomOf="@+id/imageView_userInfo_review"
                     app:layout_constraintEnd_toStartOf="@+id/imageView_userInfo_review"
                     app:layout_constraintTop_toTopOf="@+id/imageView_userInfo_review" />
@@ -286,8 +287,8 @@
                     android:layout_width="36dp"
                     android:layout_height="36dp"
                     android:layout_marginStart="80dp"
-                    android:src="@drawable/ic_check_box_24dp"
                     android:background="?attr/selectableItemBackground"
+                    android:src="@drawable/ic_check_box_24dp"
                     app:layout_constraintBottom_toBottomOf="@+id/imageView_userInfo_review"
                     app:layout_constraintStart_toEndOf="@+id/imageView_userInfo_review"
                     app:layout_constraintTop_toTopOf="@+id/imageView_userInfo_review" />
@@ -296,8 +297,8 @@
                     android:id="@+id/imageView_userInfo_favorite"
                     android:layout_width="36dp"
                     android:layout_height="36dp"
-                    android:src="@drawable/ic_favorite_48dp"
                     android:background="?attr/selectableItemBackground"
+                    android:src="@drawable/ic_favorite_48dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="@+id/imageView_userInfo_review"
                     app:layout_constraintStart_toStartOf="@+id/imageView_userInfo_review"
@@ -308,8 +309,8 @@
                     android:layout_width="36dp"
                     android:layout_height="36dp"
                     android:layout_marginEnd="80dp"
-                    android:src="@drawable/ic_sell_24dp"
                     android:background="?attr/selectableItemBackground"
+                    android:src="@drawable/ic_sell_24dp"
                     app:layout_constraintBottom_toTopOf="@+id/textView9"
                     app:layout_constraintEnd_toStartOf="@+id/imageView_userInfo_favorite"
                     app:layout_constraintTop_toTopOf="@+id/imageView_userInfo_favorite" />
@@ -347,14 +348,22 @@
 
                     <TextView
                         android:id="@+id/textView_userInfo_address"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="20dp"
+                        android:layout_marginEnd="20dp"
+                        android:ellipsize="end"
+                        android:ems="12"
+                        android:maxLines="1"
+                        android:singleLine="true"
                         app:layout_constraintBottom_toBottomOf="@+id/textView16"
+                        app:layout_constraintEnd_toStartOf="@+id/imageView2"
+                        app:layout_constraintHorizontal_bias="0.0"
                         app:layout_constraintStart_toEndOf="@+id/textView16"
                         app:layout_constraintTop_toTopOf="@+id/textView16" />
 
                     <ImageView
+                        android:id="@+id/imageView2"
                         android:layout_width="36dp"
                         android:layout_height="36dp"
                         android:src="@drawable/ic_plus_24dp"

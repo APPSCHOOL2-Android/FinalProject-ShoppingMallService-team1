@@ -21,9 +21,9 @@
             android:theme="?attr/actionBarTheme"
             app:navigationIcon="@drawable/ic_back_24dp"
             app:title="아이펫"
-            app:titleCentered = "true"
+            app:titleCentered="true"
             app:titleTextAppearance="@style/Typography.yeongdo18"
-            app:titleTextColor="@color/brown_100"/>
+            app:titleTextColor="@color/brown_100" />
 
         <ScrollView
             android:id="@+id/scrollview_productinfo"
@@ -44,26 +44,39 @@
                         android:id="@+id/viewpager2_productinfo_thumbnail"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent" />
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_productinfo_term"
+                        style="@style/Widget.Material3.Chip.Assist"
+                        app:chipBackgroundColor="@color/brown_200"
+                        android:textColor="@color/white"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        app:ensureMinTouchTargetSize="true"
+                        app:titleTextAppearance = "@style/Typography.Regular15"
+                        app:layout_constraintEnd_toEndOf="@id/viewpager2_productinfo_thumbnail"
+                        app:layout_constraintTop_toTopOf="@id/viewpager2_productinfo_thumbnail"/>
 
                     <com.google.android.material.tabs.TabLayout
                         android:id="@+id/tabLayout_productinfo_dot"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@android:color/transparent"
+                        app:layout_constraintBottom_toBottomOf="@id/viewpager2_productinfo_thumbnail"
+                        app:layout_constraintEnd_toEndOf="@id/viewpager2_productinfo_thumbnail"
+                        app:layout_constraintStart_toStartOf="@id/viewpager2_productinfo_thumbnail"
                         app:tabBackground="@drawable/selector_tab_dot"
                         app:tabGravity="center"
-                        app:tabIndicatorHeight="0dp"
-                        app:layout_constraintStart_toStartOf="@id/viewpager2_productinfo_thumbnail"
-                        app:layout_constraintEnd_toEndOf="@id/viewpager2_productinfo_thumbnail"
-                        app:layout_constraintBottom_toBottomOf="@id/viewpager2_productinfo_thumbnail"/>
+                        app:tabIndicatorHeight="0dp" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <TextView
-                    android:id="@+id/textView_productinfo_brand"
+                    android:id="@+id/textView_productinfo_category"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="브랜드"
@@ -199,14 +212,6 @@
             </LinearLayout>
         </ScrollView>
     </LinearLayout>
-
-    <include
-        android:id="@+id/include_productinfo_bottomsheet"
-        layout="@layout/bottomsheet_productinfo"
-        app:behavior_peekHeight="0dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"/>
 
     <LinearLayout
         android:layout_width="match_parent"

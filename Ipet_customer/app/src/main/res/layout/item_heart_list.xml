@@ -4,60 +4,75 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/white"
-    android:orientation="horizontal">
-
-    <ImageView
-        android:id="@+id/imageView_heart_img"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        app:srcCompat="@drawable/img_dog_food1" />
+    android:orientation="vertical">
 
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_weight="1"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/textView_heart_brand"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="브랜드"
-            android:textAppearance="@style/Typography.Medium14" />
-
-        <TextView
-            android:id="@+id/textView_heart_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="강아지 사료"
-            android:textAppearance="@style/Typography.Medium16" />
-
-        <TextView
-            android:id="@+id/textView_heart_price"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="10,000원"
-            android:textAppearance="@style/Typography.Medium16" />
-    </LinearLayout>
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:background="@color/background"
+        android:orientation="vertical"></LinearLayout>
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:background="@color/white"
+        android:orientation="horizontal"
+        android:padding="10dp">
 
-        <Button
-            android:id="@+id/button_heart_delete"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="삭제"
-            android:textAppearance="@style/Typography.Bold14" />
+        <ImageView
+            android:id="@+id/imageView_heart_img"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            app:srcCompat="@drawable/img_dog_food1" />
 
-        <Button
-            android:id="@+id/button_heart_basket"
-            android:layout_width="match_parent"
+        <LinearLayout
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="장바구니"
-            android:textAppearance="@style/Typography.Bold14" />
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textView_heart_brand"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="브랜드"
+                android:textAppearance="@style/Typography.Medium14" />
+
+            <TextView
+                android:id="@+id/textView_heart_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="강아지 사료"
+                android:textAppearance="@style/Typography.Medium16" />
+
+            <TextView
+                android:id="@+id/textView_heart_price"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="10,000원"
+                android:textAppearance="@style/Typography.Medium16" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/button_heart_delete"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="삭제"
+                android:textAppearance="@style/Typography.Bold14" />
+
+            <Button
+                android:id="@+id/button_heart_basket"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="장바구니"
+                android:textAppearance="@style/Typography.Bold14" />
+        </LinearLayout>
     </LinearLayout>
+
 </LinearLayout>

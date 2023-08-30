@@ -103,8 +103,21 @@ class ShoppingBasketFragment : Fragment() {
             // 결제하기 버튼
             buttonShoppingBasketPayment.run {
                 setOnClickListener {
+                    val selectedProductIdxList = selectedProducts.map { position ->
+                        productDataList[position].productIdx
+                    }
+
+                    val selectedJointIdxList = selectedGroupProducts.map { position ->
+                        jointDataList[position].jointIdx
+                    }
+
+                    val bundle = Bundle().apply {
+                        putStringArrayList("selectedProductIdxList", ArrayList(selectedProductIdxList))
+                        putStringArrayList("selectedJointIdxList", ArrayList(selectedJointIdxList))
+                    }
+
                     mainActivity.activityMainBinding.bottomNavigation.visibility = View.GONE
-                    mainActivity.replaceFragment(MainActivity.PAYMENT_FRAGMENT, true, null)
+                    mainActivity.replaceFragment(MainActivity.PAYMENT_FRAGMENT, true, bundle)
                 }
             }
 
@@ -452,7 +465,7 @@ class ShoppingBasketFragment : Fragment() {
 
         override fun onBindViewHolder(holder: ShoppingBasketGroupBuyingHolder, position: Int) {
             holder.textViewGroupBuyingName.text = jointDataList[position].jointTitle
-            holder.textViewGroupBuyingCount.text = "남은 사람 : ${jointDataList[position].jointTotalMember - jointDataList[position].jointMember}명"
+            holder.textViewGroupBuyingCount.text = "${jointDataList[position].jointMember}명 / ${jointDataList[position].jointTotalMember}명"
             holder.textViewGroupBuyingPeriod.text = jointDataList[position].jointTerm
             holder.textViewGroupBuyingPrice.text = "${mainActivity.formatNumberToCurrency(jointDataList[position].jointPrice)}원"
 

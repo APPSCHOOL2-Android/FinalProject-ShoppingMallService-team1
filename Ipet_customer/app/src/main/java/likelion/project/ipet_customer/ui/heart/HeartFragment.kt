@@ -9,6 +9,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import likelion.project.ipet_customer.R
 import likelion.project.ipet_customer.databinding.FragmentHeartBinding
 import likelion.project.ipet_customer.databinding.ItemHeartListBinding
 import likelion.project.ipet_customer.ui.main.MainActivity
@@ -26,6 +27,13 @@ class HeartFragment : Fragment() {
         mainActivity = activity as MainActivity
 
         fragmentHeartBinding.run {
+            toolbarHeart.run {
+                title = "찜"
+                setNavigationIcon(R.drawable.ic_back_24dp)
+                setNavigationOnClickListener {
+                    mainActivity.removeFragment(MainActivity.HEART_FRAGMENT)
+                }
+            }
 
             recyclerViewHeartList.run {
                 adapter = RecyclerViewAdapter()

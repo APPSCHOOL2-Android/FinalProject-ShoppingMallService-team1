@@ -6,7 +6,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
-import likelion.project.ipet_customer.R
 import likelion.project.ipet_customer.databinding.FragmentProductJointListBinding
 import likelion.project.ipet_customer.repository.JointRepository
 import likelion.project.ipet_customer.ui.main.MainActivity
@@ -32,13 +31,7 @@ class ProductJointListFragment : Fragment() {
         mainActivity = activity as MainActivity
 
         fragmentProductJointListBinding.run {
-            toolbarProductJointList.run {
-                title = "공동 구매 상품 리스트"
-                setNavigationIcon(R.drawable.ic_back_24dp)
-                setNavigationOnClickListener {
-                    mainActivity.removeFragment(MainActivity.PRODUCT_JOINT_LIST_FRAGMENT)
-                }
-            }
+            toolbarProductJointList.title = "공동 구매 상품 리스트"
 
             recyclerProductJointList.run {
                 adapter = ProductJointAdapter(viewModel, mainActivity)
