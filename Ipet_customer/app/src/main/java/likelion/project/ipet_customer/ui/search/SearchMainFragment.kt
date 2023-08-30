@@ -31,7 +31,7 @@ class SearchMainFragment : Fragment() {
 
     lateinit var fragmentSearchMainBinding: FragmentSearchMainBinding
     lateinit var mainActivity: MainActivity
-    lateinit var viewModel: SearchViewModel
+    lateinit var searchviewModel: SearchViewModel
     val productList = mutableListOf<Product>()
     val bestIdxList = mutableListOf<String>()
     val bestSellerList = mutableListOf<Any>()
@@ -43,10 +43,10 @@ class SearchMainFragment : Fragment() {
     ): View? {
         fragmentSearchMainBinding = FragmentSearchMainBinding.inflate(inflater)
         mainActivity = activity as MainActivity
-        viewModel = ViewModelProvider(this, SearchViewModel.Factory(mainActivity.application)).get(SearchViewModel::class.java)
+        searchviewModel = ViewModelProvider(this, SearchViewModel.Factory(mainActivity.application)).get(SearchViewModel::class.java)
 
         fragmentSearchMainBinding.run {
-            viewModel.getAllSearches.observe(viewLifecycleOwner, Observer { search ->
+            searchviewModel.getAllSearches.observe(viewLifecycleOwner, Observer { search ->
                 val searchList = search.map { it.searchData }
                 val reverseList = searchList.reversed()
                 chip1.text = reverseList.getOrNull(0) ?: "검색어 1"
@@ -114,7 +114,7 @@ class SearchMainFragment : Fragment() {
             }
 
             recyclerViewSearchResult.run {
-                adapter = SearchAdapter(productList, mainActivity)
+                adapter = SearchAdapter(productList, mainActivity, searchviewModel)
                 layoutManager = GridLayoutManager(context, 2)
             }
         }
@@ -160,7 +160,7 @@ class SearchMainFragment : Fragment() {
             fragmentSearchMainBinding.layoutSearchRecent.visibility = View.GONE
             fragmentSearchMainBinding.layoutSearchBest.visibility = View.GONE
             val search = Search(0, query)
-            viewModel.insertSearch(search)
+            searchviewModel.insertSearch(search)
             productList.clear()
             db.collection("Product")
                 .get()

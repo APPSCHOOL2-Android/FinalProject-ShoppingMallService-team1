@@ -48,7 +48,7 @@ class ProductCategoryFragment : Fragment() {
         if (productList.isEmpty()) {
             fragmentProductCategoryBinding.run {
                 recyclerProductList.run {
-                    adapter = Adapter()
+                    adapter = ProductListAdapter(productList, mainActivity)
                     layoutManager = GridLayoutManager(context, 2)
                 }
 
@@ -145,52 +145,6 @@ class ProductCategoryFragment : Fragment() {
             }
     }
 
-    inner class Adapter: RecyclerView.Adapter<Adapter.Holder>() {
-        inner class Holder(itemProductCardBinding: ItemProductCardBinding): RecyclerView.ViewHolder(itemProductCardBinding.root) {
-            val imageViewCardThumbnail: ImageView
-            val textViewCardTitle: TextView
-            val textViewCardCost: TextView
-
-            init {
-                imageViewCardThumbnail = itemProductCardBinding.imageViewCardThumbnail
-                textViewCardTitle = itemProductCardBinding.textViewCardTitle
-                textViewCardCost = itemProductCardBinding.textViewCardCost
-                itemProductCardBinding.root.setOnClickListener {
-                    var bundle = Bundle()
-                    val readProductIdx = productList[adapterPosition].productIdx
-                    bundle.putString("readProductIdx", readProductIdx)
-                    bundle.putString("readToggle", "product")
-                    mainActivity.replaceFragment(MainActivity.PRODUCT_INFO_FRAGMENT, false, bundle)
-                }
-            }
-        }
-
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
-            val itemProductCardBinding = ItemProductCardBinding.inflate(layoutInflater)
-            val holder = Holder(itemProductCardBinding)
-
-            itemProductCardBinding.root.layoutParams = ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-            )
-
-            return holder
-        }
-
-        override fun getItemCount(): Int {
-            return productList.size
-        }
-
-        override fun onBindViewHolder(holder: Holder, position: Int) {
-            holder.textViewCardTitle.text = productList[position].productTitle
-            holder.textViewCardCost.text = productList[position].productPrice.toString()
-            if (productList[position].productImg[0] != "") {
-                Glide.with(holder.itemView)
-                    .load(productList[position].productImg[0])
-                    .into(holder.imageViewCardThumbnail)
-            }
-        }
-    }
     fun setSmallCategory(cat1: String, cat2: String, cat3: String, cat4: String, cat5: String, cat6: String) {
         fragmentProductCategoryBinding.run {
             buttonCategory1.text = cat1

@@ -23,7 +23,7 @@ class UserInfoAddressFragment : Fragment() {
 
     lateinit var fragmentUserInfoAddressBinding: FragmentUserInfoAddressBinding
     lateinit var mainActivity: MainActivity
-    val blogAddress = "https://woojugoing.blogspot.com/2023/08/daum-address-api.html"
+    val blogAddress = "https://s3.ap-northeast-2.amazonaws.com/ipet.address.insert/index.html"
     val userInfoViewModel = UserInfoViewModel()
 
     inner class JSInterface {

@@ -106,7 +106,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
                     android:fontFamily="@font/pretendard_bold"
-                    android:text="판매/배송"
+                    android:text="주문/배송"
                     android:textAppearance="@style/Typography.Bold16"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
