@@ -2,6 +2,7 @@ package likelion.project.ipet_customer.ui.home
 
 import android.graphics.Paint
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -101,13 +102,24 @@ class HomeJointAdapter(private val mainActivity: MainActivity, val jointsList: M
         }
 
         holder.itemJointMemberIc.setColorFilter(ContextCompat.getColor(mainActivity, R.color.brown_200))
+        holder.itemJointTitle.text = adjustTitleLength(joint.jointTitle)
 
-        holder.itemJointTitle.text = joint.jointTitle
         holder.itemJointPrice.text = "${mainActivity.formatNumberToCurrency(joint.jointPrice)}원"
         if (joint.jointImg[0] != "") {
             Glide.with(holder.itemView)
                 .load(joint.jointImg[0])
                 .into(holder.itemJointImg)
         }
+    }
+
+    private fun adjustTitleLength(title : String) : String {
+        var adjustTitle = title
+
+        if (adjustTitle.length > 8){
+            adjustTitle = adjustTitle.subSequence(0, 8).toString()
+            adjustTitle += "..."
+        }
+
+        return adjustTitle
     }
 }
