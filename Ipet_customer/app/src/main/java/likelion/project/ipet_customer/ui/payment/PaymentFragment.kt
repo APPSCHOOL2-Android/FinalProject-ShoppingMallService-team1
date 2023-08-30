@@ -23,6 +23,7 @@ import likelion.project.ipet_customer.model.Joint
 import likelion.project.ipet_customer.model.Product
 import likelion.project.ipet_customer.ui.login.LoginViewModel
 import likelion.project.ipet_customer.ui.main.MainActivity
+import java.sql.Timestamp
 
 class PaymentFragment : Fragment() {
 
@@ -132,9 +133,15 @@ class PaymentFragment : Fragment() {
                 true
             }
 
-            // 결제하기 버튼 클릭
+            // 결제하기 버튼 클릭 이벤트 처리
             buttonPayment.setOnClickListener {
-                mainActivity.replaceFragment(MainActivity.PAYMENT_COMPLETE_FRAGMENT, false, null)
+                selectedProductIdxList?.let { selectedProductIdxList ->
+                    addOrders(selectedProductIdxList, customerId)
+                }
+
+                selectedJointIdxList?.let { selectedJointIdxList ->
+                    addJointOrders(selectedJointIdxList, customerId)
+                }
             }
 
         }
@@ -238,6 +245,110 @@ class PaymentFragment : Fragment() {
 
         }
     }
+
+    private fun addOrders(selectedProductIdxList: List<String>, customerId: String) {
+        val currentTimeMillis = System.currentTimeMillis()
+        val currentTime = Timestamp(currentTimeMillis)
+
+        selectedProductIdxList.forEach { selectedProductIdx ->
+            val orderData = hashMapOf(
+                "orderDate" to currentTime,
+                "orderNumber" to "",
+                "buyerId" to customerId,
+                "orderRecipient" to customerId,
+                "orderState" to 1,
+                "productIdx" to selectedProductIdx
+            )
+
+            db.collection("Product")
+                .whereEqualTo("productIdx", selectedProductIdx)
+                .get()
+                .addOnSuccessListener { productResult ->
+                    if (!productResult.isEmpty) {
+                        val productDocument = productResult.documents[0]
+                        val sellerId = productDocument.getString("productSeller")
+                        orderData["sellerId"] = sellerId ?: ""
+
+                        db.collection("Order3")
+                            .add(orderData)
+                            .addOnSuccessListener { documentReference ->
+                                val orderNumber = documentReference.id
+                                orderData["orderNumber"] = orderNumber
+
+                                db.collection("Order3")
+                                    .document(documentReference.id)
+                                    .set(orderData)
+                                    .addOnSuccessListener {
+                                        Log.d("PaymentFragment", "Order document updated with orderNumber: $orderNumber")
+                                        mainActivity.replaceFragment(MainActivity.PAYMENT_COMPLETE_FRAGMENT, false, null)
+                                    }
+                                    .addOnFailureListener { e ->
+                                        Log.w("PaymentFragment", "Error updating Order document", e)
+                                    }
+                            }
+                            .addOnFailureListener { e ->
+                                Log.w("PaymentFragment", "Error adding Order document", e)
+                            }
+                    }
+                }
+                .addOnFailureListener { e ->
+                    Log.w("PaymentFragment", "Error getting product document", e)
+                }
+        }
+    }
+
+    private fun addJointOrders(selectedJointIdxList: List<String>, customerId: String) {
+        val currentTimeMillis = System.currentTimeMillis()
+        val currentTime = Timestamp(currentTimeMillis)
+
+        selectedJointIdxList.forEach { selectedJointIdx ->
+            val orderData = hashMapOf(
+                "orderDate" to currentTime,
+                "orderNumber" to "",
+                "buyerId" to customerId,
+                "orderRecipient" to customerId,
+                "orderState" to 1,
+                "productIdx" to selectedJointIdx
+            )
+
+            db.collection("Joint")
+                .whereEqualTo("jointIdx", selectedJointIdx)
+                .get()
+                .addOnSuccessListener { jointResult ->
+                    if (!jointResult.isEmpty) {
+                        val jointDocument = jointResult.documents[0]
+                        val sellerId = jointDocument.getString("jointSeller")
+                        orderData["sellerId"] = sellerId ?: ""
+
+                        db.collection("Order3")
+                            .add(orderData)
+                            .addOnSuccessListener { documentReference ->
+                                val orderNumber = documentReference.id
+                                orderData["orderNumber"] = orderNumber
+
+                                db.collection("Order3")
+                                    .document(documentReference.id)
+                                    .set(orderData)
+                                    .addOnSuccessListener {
+                                        Log.d("PaymentFragment", "Order document updated with orderNumber: $orderNumber")
+                                        mainActivity.replaceFragment(MainActivity.PAYMENT_COMPLETE_FRAGMENT, false, null)
+                                    }
+                                    .addOnFailureListener { e ->
+                                        Log.w("PaymentFragment", "Error updating Order document", e)
+                                    }
+                            }
+                            .addOnFailureListener { e ->
+                                Log.w("PaymentFragment", "Error adding Order document", e)
+                            }
+                    }
+                }
+                .addOnFailureListener { e ->
+                    Log.w("PaymentFragment", "Error getting joint document", e)
+                }
+        }
+    }
+
+
 
 
     inner class PaymentProductAdapter : RecyclerView.Adapter<PaymentProductAdapter.PaymentProductViewHolder>() {
