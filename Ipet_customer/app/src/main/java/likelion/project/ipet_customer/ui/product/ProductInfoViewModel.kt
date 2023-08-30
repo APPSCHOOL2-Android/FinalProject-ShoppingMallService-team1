@@ -60,13 +60,7 @@ class ProductInfoViewModel : ViewModel() {
             val customerId = LoginViewModel.customer.customerId
             val cart = Cart(customerId, productIdx, productType)
 
-            // 비동기 작업 수행 후 Deferred를 반환
-            val deferred = async(Dispatchers.IO) {
-                cartRepository.setAddCart(cart)
-            }
-
-            // 비동기 작업이 완료될 때까지 대기하며 결과 반환
-            deferred.await()
+            cartRepository.setAddCart(cart)
         }
     }
 
