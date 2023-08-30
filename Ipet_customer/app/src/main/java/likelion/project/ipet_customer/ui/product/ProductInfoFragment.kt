@@ -128,7 +128,8 @@ class ProductInfoFragment : Fragment() {
     }
 
     private fun handleProductData(product: Product) {
-        loadText(product.productTitle, product.productText, product.productPrice)
+        val category = product.productAnimalType + "/" + product.productLcategory + "/" + product.productScategory
+        loadText(product.productTitle, product.productText, product.productPrice, category)
         imgList = product.productImg as ArrayList<String>
 
         binding.run {
@@ -155,7 +156,9 @@ class ProductInfoFragment : Fragment() {
     }
 
     private fun handleJointData(joint: Joint) {
-        loadText(joint.jointTitle, joint.jointText, joint.jointPrice)
+        val category = joint.jointAnimalType
+
+        loadText(joint.jointTitle, joint.jointText, joint.jointPrice, category)
         imgList = joint.jointImg as ArrayList<String>
         binding.run {
             viewpager2ProductinfoThumbnail.adapter = ProductInfoFragmentStateAdapter(mainActivity)
@@ -226,10 +229,11 @@ class ProductInfoFragment : Fragment() {
         }
     }
 
-    fun loadText(title:String, text:String, price:Long){
+    fun loadText(title:String, text:String, price:Long, category: String){
         binding.textviewProductinfoTitle.text = title
         binding.textviewProductinfoText.text = text
         binding.textviewProductinfoPrice.text = "${mainActivity.formatNumberToCurrency(price)}원"
+        binding.textViewProductinfoCategory.text = category
     }
 
     fun loadReviewData(score:Float, number : Int){

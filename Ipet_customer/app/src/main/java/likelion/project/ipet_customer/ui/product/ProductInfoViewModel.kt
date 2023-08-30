@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.ListenerRegistration
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import likelion.project.ipet_customer.model.Cart
 import likelion.project.ipet_customer.model.Heart
@@ -30,7 +29,6 @@ class ProductInfoViewModel : ViewModel() {
     val productLiveData = MutableLiveData<Product>()
     val jointLiveData = MutableLiveData<Joint>()
     val reviewLiveData = MutableLiveData<MutableList<Review>>()
-    val heartLiveData = MutableLiveData<Boolean>()
 
     private var heartListenerRegistration: ListenerRegistration? = null
 
