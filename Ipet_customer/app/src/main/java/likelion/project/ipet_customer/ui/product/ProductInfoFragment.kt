@@ -1,5 +1,6 @@
 package likelion.project.ipet_customer.ui.product
 
+import android.content.res.ColorStateList
 import android.graphics.Paint
 import android.os.Bundle
 import android.util.Log
@@ -149,6 +150,8 @@ class ProductInfoFragment : Fragment() {
                 }
                 bottomSheetFragment.show(childFragmentManager, bottomSheetFragment.tag)
             }
+
+            chipProductinfoTerm.visibility = View.GONE
         }
 
         setupTabLayoutMediator()
@@ -171,6 +174,8 @@ class ProductInfoFragment : Fragment() {
             }
 
             imageviewProductinfoHeart.visibility = View.GONE
+
+            chipProductinfoTerm.text = joint.jointTerm
         }
 
         setupTabLayoutMediator()

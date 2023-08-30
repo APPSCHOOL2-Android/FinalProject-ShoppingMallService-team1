@@ -48,6 +48,19 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_productinfo_term"
+                        style="@style/Widget.Material3.Chip.Assist"
+                        app:chipBackgroundColor="@color/brown_200"
+                        android:textColor="@color/white"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        app:ensureMinTouchTargetSize="true"
+                        app:titleTextAppearance = "@style/Typography.Regular15"
+                        app:layout_constraintEnd_toEndOf="@id/viewpager2_productinfo_thumbnail"
+                        app:layout_constraintTop_toTopOf="@id/viewpager2_productinfo_thumbnail"/>
+
                     <com.google.android.material.tabs.TabLayout
                         android:id="@+id/tabLayout_productinfo_dot"
                         android:layout_width="match_parent"
