@@ -8,20 +8,26 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentTransaction
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.coroutines.async
 import likelion.project.ipet_customer.R
 import likelion.project.ipet_customer.databinding.FragmentOrderStatusBinding
 import likelion.project.ipet_customer.databinding.ItemOrderStatusBinding
+import likelion.project.ipet_customer.model.Order
+import likelion.project.ipet_customer.model.Product
 import likelion.project.ipet_customer.ui.main.MainActivity
 
 class OrderStatusFragment : Fragment() {
 
     lateinit var fragmentOrderStatusBinding: FragmentOrderStatusBinding
     lateinit var mainActivity: MainActivity
-    var fragmentState = ""
+    private lateinit var orderStatusViewModel: OrderStatusViewModel
+    lateinit var productList: MutableList<Product>
+    lateinit var orderList: MutableList<Order>
+    private var fragmentState = ""
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -29,29 +35,35 @@ class OrderStatusFragment : Fragment() {
     ): View? {
         fragmentOrderStatusBinding = FragmentOrderStatusBinding.inflate(inflater)
         mainActivity = activity as MainActivity
+        orderStatusViewModel = ViewModelProvider(this)[OrderStatusViewModel::class.java]
 
         fragmentState = arguments?.getString("fragmentState")!!
 
         fragmentOrderStatusBinding.run {
-            toolbarOrderStatus.run {
-                title = when(fragmentState) {
-                    "Detail" -> "주문/배송"
-                    "Cancel" -> "취소/반품/교환"
-                    "Review" -> "내 리뷰"
-                    else -> null
-                }
-                setNavigationIcon(R.drawable.ic_back_24dp)
-                setNavigationOnClickListener {
-                    mainActivity.removeFragment(MainActivity.ORDER_STATUS_FRAGMENT)
-                }
-            }
-            recyclerViewOrderStatus.run {
-                adapter = OrderStatusAdapter(fragmentState)
-                layoutManager = LinearLayoutManager(context)
-            }
-        }
+            orderStatusViewModel.viewModelScope.async {
+                productList = orderStatusViewModel.getAllProduct()
+                orderList = orderStatusViewModel.getAllOrder()
 
-        return fragmentOrderStatusBinding.root
+                toolbarOrderStatus.run {
+                    title = when(fragmentState) {
+                        "Detail" -> "주문/배송"
+                        "Cancel" -> "취소/반품/교환"
+                        "Review" -> "내 리뷰"
+                        else -> null
+                    }
+                    setNavigationIcon(R.drawable.ic_back_24dp)
+                    setNavigationOnClickListener {
+                        mainActivity.removeFragment(MainActivity.ORDER_STATUS_FRAGMENT)
+                    }
+                }
+                recyclerViewOrderStatus.run {
+                    adapter = OrderStatusAdapter(fragmentState)
+                    layoutManager = LinearLayoutManager(context)
+                }
+            }
+
+            return fragmentOrderStatusBinding.root
+            }
     }
 
     inner class OrderStatusAdapter(private val fragmentState: String) : RecyclerView.Adapter<OrderStatusAdapter.Holder>() {
@@ -105,7 +117,7 @@ class OrderStatusFragment : Fragment() {
         }
 
         override fun getItemCount(): Int {
-            return 10
+            return orderList.size
         }
 
         override fun onBindViewHolder(holder: Holder, position: Int) {
