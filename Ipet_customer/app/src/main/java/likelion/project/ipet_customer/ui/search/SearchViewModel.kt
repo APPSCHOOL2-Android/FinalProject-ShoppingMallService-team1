@@ -20,10 +20,8 @@ import likelion.project.ipet_customer.ui.login.LoginViewModel
 class SearchViewModel(application: Application): AndroidViewModel(application) {
 
     val getAllSearches: LiveData<List<Search>>
-    val heartLiveData = MutableLiveData<Boolean>()
     private val searchRepository: SearchRepository
     private val heartRepository: HeartRepository
-    private var heartListenerRegistration: ListenerRegistration? = null
 
     init {
         val searchDAO = SearchDB.getDB(application)!!.searchDAO()
@@ -52,15 +50,7 @@ class SearchViewModel(application: Application): AndroidViewModel(application) {
         }
     }
 
-    fun registerHeartListener(productIdx: String, callback: (Boolean) -> (Unit)) {
-        heartListenerRegistration?.remove()
-        val buyerId = LoginViewModel.customer.customerId
-        heartListenerRegistration = heartRepository.registerHeartListener(buyerId, productIdx){
-            isHearted -> callback(isHearted)
-        }
-    }
-
-    class Factory(val application: Application): ViewModelProvider.Factory{
+    class Factory(private val application: Application): ViewModelProvider.Factory{
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             return SearchViewModel(application) as T
         }
