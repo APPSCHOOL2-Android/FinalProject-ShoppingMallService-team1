@@ -101,6 +101,10 @@ class MainActivity : AppCompatActivity() {
         supportFragmentManager.popBackStack(name, FragmentManager.POP_BACK_STACK_INCLUSIVE)
     }
 
+    fun removeFragment(name: String, bundle: Bundle) {
+
+    }
+
     companion object {
         val LOGIN_FRAGMENT = "LoginFragment"
         val HOME_FRAGMENT = "HomeFragment"

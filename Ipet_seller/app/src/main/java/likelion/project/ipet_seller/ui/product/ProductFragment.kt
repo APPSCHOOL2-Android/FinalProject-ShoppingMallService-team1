@@ -29,6 +29,7 @@ class ProductFragment : Fragment() {
 
         arguments?.getString("product")?.let {
             val product = Json.decodeFromString(Product.serializer(), it)
+            Log.d("product", "${product}")
             initView(product)
         }
 
@@ -44,6 +45,14 @@ class ProductFragment : Fragment() {
                 setNavigationOnClickListener {
                     mainActivity.removeFragment(MainActivity.PRDUCT_FRAGMENT)
                 }
+                setOnMenuItemClickListener {
+                    if (it.itemId == R.id.item_product_edit) {
+                        val bundle = Bundle()
+                        bundle.putString("product", Json.encodeToString(product))
+                        mainActivity.replaceFragment(MainActivity.REGISTRATION_FRAGMENT, true, bundle)
+                    }
+                    true
+                }
             }
 
             Glide.with(root)
@@ -54,7 +63,8 @@ class ProductFragment : Fragment() {
             chipProductLcategory.text = product?.productLcategory
             chipProductScategory.text = product?.productScategory
             textViewProductTitle.text = product?.productTitle
-            textViewProductStock.text = "재고: ${product?.productStock.toString()}개"
+            textViewProductPrice.text = "가격: ${product?.productPrice}원"
+            textViewProductStock.text = "재고: ${product?.productStock}개"
             textViewProductDescription.text = product?.productText
         }
     }

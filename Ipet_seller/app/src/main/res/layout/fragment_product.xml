@@ -79,13 +79,21 @@
         app:layout_constraintTop_toBottomOf="@id/chipGroup_product" />
 
     <TextView
+        android:id="@+id/textView_product_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/Typography.Bold16"
+        app:layout_constraintTop_toBottomOf="@+id/textView_product_title"
+        app:layout_constraintStart_toStartOf="@id/guideLine_product_start"/>
+
+    <TextView
         android:id="@+id/textView_product_stock"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:textAppearance="@style/Typography.Regular16"
         app:layout_constraintStart_toStartOf="@id/guideLine_product_start"
-        app:layout_constraintTop_toBottomOf="@id/textView_product_title" />
+        app:layout_constraintTop_toBottomOf="@id/textView_product_price" />
 
     <TextView
         android:id="@+id/textView_product_description"

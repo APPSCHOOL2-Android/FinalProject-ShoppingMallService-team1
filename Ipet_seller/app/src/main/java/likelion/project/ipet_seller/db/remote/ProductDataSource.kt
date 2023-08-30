@@ -74,6 +74,35 @@ class ProductDataSource {
         }
     }
 
+    suspend fun updateProduct(product: Product): Flow<Result<Boolean>> {
+        return flow {
+            runCatching {
+                checkProduct(product)
+                val uploadedImages = mutableListOf<String>()
+                val filtedimages = product.productImg.filter { !it.startsWith("https://firebasestorage.googleapis.com/") }
+                filtedimages.forEach {
+                    var file = Uri.parse(it)
+                    Log.d("업데이트", "${file}")
+                    val uploadTask = storageRef.child("productImages/${product.productIdx}/${System.currentTimeMillis()}.png")
+                        .putFile(file)
+                        .await()
+                    val downloadUrl = uploadTask.storage.downloadUrl.await()
+                    uploadedImages.add(downloadUrl.toString())
+                }
+                val productImages = product.productImg.toSet().filter { !it.startsWith("content:") }.toMutableList() + uploadedImages
+
+                db.collection(PRODUCT_COLLECTION)
+                    .document(product.productIdx)
+                    .set(product.copy(productImg = productImages))
+                    .await()
+            }.onSuccess {
+                emit(Result.success(true))
+            }.onFailure {
+                emit(Result.failure(it))
+            }
+        }
+    }
+
     private fun checkProduct(product: Product) {
         require(product.productImg.isNotEmpty()) { throw Exception("하나 이상의 이미지가 필요합니다") }
         require(product.productTitle.isNotEmpty()) { throw Exception("상품명을 작성해주세요") }
